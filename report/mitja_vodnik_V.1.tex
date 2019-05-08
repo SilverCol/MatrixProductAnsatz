@@ -1,0 +1,80 @@
+\documentclass[a4paper]{article}
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage[margin=2cm, bottom=3cm, foot=1.5cm]{geometry}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{subcaption}
+\usepackage{hyperref}
+
+\newcommand{\tht}{\theta}
+\newcommand{\Tht}{\Theta}
+\newcommand{\dlt}{\delta}
+\newcommand{\eps}{\epsilon}
+\newcommand{\thalf}{\frac{3}{2}}
+\newcommand{\ddx}[1]{\frac{d^2#1}{dx^2}}
+\newcommand{\ddr}[2]{\frac{\partial^2#1}{\partial#2^2}}
+\newcommand{\mddr}[3]{\frac{\partial^2#1}{\partial#2\partial#3}}
+
+\newcommand{\der}[2]{\frac{d#1}{d#2}}
+\newcommand{\pder}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\forth}{\frac{1}{4}}
+\newcommand{\q}{\underline{q}}
+\newcommand{\p}{\underline{p}}
+\newcommand{\x}{\underline{x}}
+\newcommand{\liu}{\hat{\mathcal{L}}}
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+\newcommand{\pauli}{\mathbf{\sigma}}
+\newcommand{\bra}[1]{\langle#1|}
+\newcommand{\ket}[1]{|#1\rangle}
+\newcommand{\id}[1]{\mathbf{1}_{2^{#1}}}
+\newcommand{\tinv}{\frac{1}{\tau}}
+\newcommand{\s}{\sigma}
+\newcommand{\us}{\underline{\s}}
+\newcommand{\vs}{\vec{\s}}
+\newcommand{\vr}{\vec{r}}
+\newcommand{\vq}{\vec{q}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\vo}{\vec{\omega}}
+\newcommand{\uvs}{\underline{\vs}}
+\newcommand{\expected}[1]{\left\langle #1 \right\rangle}
+\newcommand{\D}{\Delta}
+
+\begin{document}
+
+    \title{\sc\large Višje računske metode\\
+		\bigskip
+		\bf\Large Matrično produktni nastavki}
+	\author{Mitja Vodnik, 28182041}
+            \date{\today}
+	\maketitle
+
+    Z metodo Monte-Carlo obravnavamo primer 1D kvantnega oscilatorja v potencialu $V(q) = \half q^2 + \lambda q^4$.
+    Zanimata nas harmonski ($\lambda = 0$) in anharmonski ($\lambda = 1$) primer. \\
+
+    \begin{equation}\label{eq1}
+        P_{q_1, q_2} \propto \exp \left( -\frac{M}{2\beta}(q_2 - q_1)^2 - \frac{\beta}{M}V(q_1) \right)
+    \end{equation}
+
+    \iffalse
+    \begin{figure}
+        \centering
+        \begin{subfigure}{\textwidth}
+            \includegraphics[width = \textwidth]{slika1.pdf}
+            \caption{}
+        \end{subfigure}
+        \begin{subfigure}{\textwidth}
+            \includegraphics[width = \textwidth]{slika2.pdf}
+            \caption{}
+        \end{subfigure}
+        \caption{Rezultati simulacije termalnega stanja harmonskega oscilatorja.
+        S $H_a$ je označena analitično izračunana vrednost povprečne energije.}
+        \label{slika1}
+    \end{figure}
+    \fi
+
+\end{document}
