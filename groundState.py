@@ -5,6 +5,7 @@ from scipy.sparse.linalg import eigsh
 # Problem size
 N = 4
 DIM = 2**N
+periodic = False 
 # Hamiltonian matrix
 H = lil_matrix((DIM, DIM))
 
@@ -18,6 +19,7 @@ def bits(n):
 for row in range(DIM):
     for n, bit in enumerate(bits(row)): 
         if n == 0:
+            if periodic: first = bit
             b1 = bit
         else:
             if b1 == bit:
@@ -27,6 +29,15 @@ for row in range(DIM):
                 col = row ^ (3 << (n-1))
                 H[row, col] += 2
             b1 = bit
+    if periodic:
+        if b1 == first:
+            H[row, row] += 1
+        else:
+            H[row, row] -= 1
+            col = row ^ (1 << (N-2) + 1)
+            H[row, col] += 2
+
+print(H.toarray())
 
 w, v = eigsh(H, k=1, which='SA')
 print(w)
