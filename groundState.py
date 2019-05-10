@@ -3,7 +3,7 @@ from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import eigsh
 
 # Problem size
-N = 4
+N = 12
 DIM = 2**N
 periodic = False 
 # Hamiltonian matrix
@@ -17,6 +17,7 @@ def bits(n):
 
 # Hamiltonian construction
 for row in range(DIM):
+    print('\r Row %d/%d' % (row, DIM), end='\r')
     for n, bit in enumerate(bits(row)): 
         if n == 0:
             if periodic: first = bit
@@ -36,10 +37,13 @@ for row in range(DIM):
             H[row, row] -= 1
             col = row ^ (1 << (N-2) + 1)
             H[row, col] += 2
-
 print(H.toarray())
 
+# Diagonalize
 w, v = eigsh(H, k=1, which='SA')
 print(w)
 print(v)
-np.save('data/groundState' + str(N) + '.npy', v)
+
+# Save
+if periodic: np.save('data/groundState' + str(N) + 'p.npy', v)
+else: np.save('data/groundState' + str(N) + '.npy', v)
