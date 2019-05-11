@@ -6,7 +6,7 @@ from useful import bits
 # Problem size
 N = 4
 DIM = 2**N
-periodic = False 
+periodic = True 
 # Hamiltonian matrix
 H = lil_matrix((DIM, DIM))
 
