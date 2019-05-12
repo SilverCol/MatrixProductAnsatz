@@ -1,9 +1,12 @@
+
+
 def bits(n, N):
     """ Yields the N bit sequence of an integer n. """
     spot = 1 << (N-1)
     for i in range(N):
         yield (n & spot) >> (N-1)
         n = n << 1
+
 
 import numpy as np
 import numpy.linalg as la
@@ -40,6 +43,7 @@ def mpa(psi):
     print('%d/%d' % (N, N))
 
     return matrices, coefficients,
+
 
 import scipy.sparse as sp
 
@@ -94,6 +98,7 @@ def kronH(N, periodic):
                 Sz)
     return H
 
+
 def idxH(N, periodic):
     """ Constructs Hamiltonian matrix row by row. Do not use it - extremely inefficient. """
     # TODO: This function doesnt work properly!
@@ -129,6 +134,7 @@ def idxH(N, periodic):
                 H[row, col] += 2
     print()
  
+
 from scipy.sparse.linalg import eigsh
 
 def gstate(N, periodic):
@@ -148,3 +154,48 @@ def gstate(N, periodic):
     fname += '.npy'
     np.save(fname, v)
     print('Output saved to ' + fname)
+
+
+def svdEntropy(N, frag, periodic):
+
+    # Initialize quantum state and the bipartition
+    if periodic: psi = np.load('data/groundState' + str(N) + 'p.npy')
+    else: psi = np.load('data/groundState' + str(N) + '.npy')
+    bpart = np.array([int(n/frag) % 2 == 0 for n in range(N)])
+    
+    # Measure partition sizes
+    A = 0
+    for spot in bpart:
+        if spot: A += 1
+    B = N - A
+    print('Chain divided: (%d) -> (%d, %d)' % (N, A, B))
+    print(''.join(['A' if spot else 'B' for spot in bpart]))
+    
+    # Set partition Hilbert dimensions
+    dimA = 2**A
+    dimB = 2**B
+    
+    # Build work matrix
+    print('Constructing work matrix...')
+    wmatrix = np.empty((dimA, dimB))
+    for i in range(dimA):
+        print('Row %d/%d' % (i, dimA), end='\r')
+        for j in range(dimB):
+            a = bits(i, A)
+            b = bits(j, B)
+            k = 0
+    
+            for part in bpart:
+                k = k << 1
+                if part: k += a.__next__()
+                else: k += b.__next__()
+    
+            wmatrix[i, j] = psi[k]
+    print()
+    
+    # Make SVD
+    print('Creating SVD...', end=' ')
+    u, d, v = la.svd(wmatrix, False)
+    print('Done')
+    
+    return -2 * np.sum(d**2 * np.log(d))
