@@ -156,6 +156,35 @@ def gstate(N, periodic):
     print('Output saved to ' + fname)
 
 
+from numpy.random import normal
+
+def mpaEntropy(N, ground, periodic):
+
+    DIM = 2**N
+    # Initialize quantum state
+    if not ground:
+        psi = np.array([ [normal()] for n in range(DIM) ])
+        psi /= la.norm(psi)
+    elif periodic: psi = np.load('data/groundState' + str(N) + 'p.npy')
+    else: psi = np.load('data/groundState' + str(N) + '.npy')
+    initial = psi
+    
+    # Cacluate the MPA
+    print('Calculating MPA...')
+    A, lambdas = mpa(psi)
+    
+    # Reconstruct initial state for error estimation
+    #print('Reconstructing initial state...', end=' ', flush=True)
+    #psi = np.array([
+    #    la.multi_dot([A[n][b] for n, b in enumerate(bits(s, N))])
+    #    for s in range(DIM) ])
+    #print('Done')
+    #print('Max. error: %.2e' % np.amax(psi - initial))
+    
+    # Calculate entropy
+    return [-2 * np.sum(a**2 * np.log(a)) for a in lambdas]
+
+
 def svdEntropy(N, frag, periodic):
 
     # Initialize quantum state and the bipartition
