@@ -1,3 +1,4 @@
+# Calculates entropies of alternating bipartitions
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -15,6 +16,9 @@ fig = plt.figure()
 ax = fig.subplots()
 
 ax.grid()
-ax.plot(np.linspace(2, 20, 19), pbc)
-ax.plot(np.linspace(2, 20, 19), obc)
+ax.set_ylabel('$E(| \\psi_0 \\rangle)$')
+ax.set_xlabel('$n$')
+pline, = ax.plot(np.linspace(2, 20, 19), pbc)
+oline, = ax.plot(np.linspace(2, 20, 19), obc)
+ax.legend((pline, oline), ('PRP', 'ORP'))
 plt.show()

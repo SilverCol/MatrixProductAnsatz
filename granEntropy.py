@@ -1,3 +1,5 @@
+# Calculates entropies for different granulations of non-compact
+# 20-chain bipartition
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -17,6 +19,10 @@ fig = plt.figure()
 ax = fig.subplots()
 
 ax.grid()
-ax.plot(domain, pbc)
-ax.plot(domain, obc)
+ax.set_ylabel('$E(| \\psi_0 \\rangle)$')
+ax.set_xlabel('Perioda biparticije')
+ax.set_title('$n = 20$')
+pline, = ax.plot(domain, pbc)
+oline, = ax.plot(domain, obc)
+ax.legend((pline, oline), ('PRP', 'ORP'))
 plt.show()

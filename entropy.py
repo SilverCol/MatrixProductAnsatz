@@ -1,3 +1,5 @@
+# Calculates MPA-s and plots entropies
+
 import numpy as np
 import numpy.linalg as la
 from numpy.random import normal
@@ -17,6 +19,15 @@ fig = plt.figure()
 ax = fig.subplots()
 
 ax.grid()
-for n in range(len(chains)):
-    ax.plot(np.linspace(0, 1, len(entropies[n])), entropies[n])
+ax.set_ylabel('$E(| \\psi_0 \\rangle)$')
+ax.set_xlabel('$j/n$')
+
+lines = []
+names = []
+for n, c in enumerate(chains):
+    lines.append(
+            ax.plot(np.linspace(0, 1, len(entropies[n])), entropies[n])[0]
+            )
+    names.append('$n = %d$' % c)
+ax.legend(lines, names)
 plt.show()

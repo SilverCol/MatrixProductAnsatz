@@ -1,3 +1,5 @@
+# Calculates entropy for simmetric bipartition
+
 import numpy as np
 from matplotlib import pyplot as plt
 from useful import bits, svdEntropy
@@ -14,6 +16,9 @@ fig = plt.figure()
 ax = fig.subplots()
 
 ax.grid()
-ax.plot(np.linspace(2, 20, 10), pbc)
-ax.plot(np.linspace(2, 20, 10), obc)
+ax.set_ylabel('$E(| \\psi_0 \\rangle)$')
+ax.set_xlabel('$n$')
+pline, = ax.plot(np.linspace(2, 20, 10), pbc)
+oline, = ax.plot(np.linspace(2, 20, 10), obc)
+ax.legend((pline, oline), ('PRP', 'ORP'))
 plt.show()
