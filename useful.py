@@ -58,10 +58,12 @@ def kronH(N, periodic):
     # Hamiltonian matrix
     H = sp.csc_matrix((DIM, DIM))
     for j in range(1, N):
+        print('Term %d/%d' % (j, N), end='\r')
         H += sp.kron(sp.kron(
                 sp.identity(2**(j-1)),
                 S2),
                 sp.identity(2**(N - j - 1)) )
+    print()
 
     if periodic:
         Sx = sp.csc_matrix([
@@ -94,11 +96,13 @@ def kronH(N, periodic):
 
 def idxH(N, periodic):
     """ Constructs Hamiltonian matrix row by row. Do not use it - extremely inefficient. """
+    # TODO: This function doesnt work properly!
     
     # Problem size
     DIM = 2**N
     
     # Hamiltonian matrix
+    print('Constructing Hamiltonian matrix...')
     H = sp.csc_matrix((DIM, DIM))
     
     # Hamiltonian construction

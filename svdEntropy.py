@@ -3,8 +3,8 @@ from numpy.linalg import svd
 from useful import bits
 
 # Parameters
-N = 18
-periodic = False
+N = 20
+periodic = True
 frag = 1 # Bipartition fragment size
 
 # Initialize quantum state and the bipartition
@@ -25,8 +25,10 @@ dimA = 2**A
 dimB = 2**B
 
 # Build work matrix
+print('Constructing work matrix...')
 wmatrix = np.empty((dimA, dimB))
 for i in range(dimA):
+    print('Row %d/%d' % (i, dimA), end='\r')
     for j in range(dimB):
         a = bits(i, A)
         b = bits(j, B)
@@ -38,6 +40,11 @@ for i in range(dimA):
             else: k += b.__next__()
 
         wmatrix[i, j] = psi[k]
+print()
 
+# Make SVD
+print('Creating SVD...', end=' ')
 u, d, v = svd(wmatrix, False)
+print('Done')
+
 print(-2 * np.sum(d**2 * np.log(d)))

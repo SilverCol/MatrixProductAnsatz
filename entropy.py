@@ -5,9 +5,9 @@ from matplotlib import pyplot as plt
 from useful import bits, mpa
 
 # Problem parameters
-N = 18
+N = 12
 DIM = 2**N
-ground = False
+ground = True
 periodic = False
 
 # Initialize quantum state
