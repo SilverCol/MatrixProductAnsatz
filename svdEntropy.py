@@ -3,9 +3,9 @@ from numpy.linalg import svd
 from useful import bits
 
 # Parameters
-N = 12
+N = 18
 periodic = False
-frag = 122 # Bipartition fragment size
+frag = 1 # Bipartition fragment size
 
 # Initialize quantum state and the bipartition
 if periodic: psi = np.load('data/groundState' + str(N) + 'p.npy')

@@ -1,12 +1,13 @@
 import numpy as np
 import numpy.linalg as la
 from numpy.random import normal
+from matplotlib import pyplot as plt
 from useful import bits, mpa
 
 # Problem parameters
-N = 14
+N = 18
 DIM = 2**N
-ground = True
+ground = False
 periodic = False
 
 # Initialize quantum state
@@ -31,4 +32,11 @@ A, lambdas = mpa(psi)
 
 # Calculate entropy
 entropies = [-2 * np.sum(a**2 * np.log(a)) for a in lambdas]
-print(np.array(entropies))
+
+plt.rcParams.update({'font.size': 15})
+fig = plt.figure()
+ax = fig.subplots()
+
+ax.grid()
+ax.plot(np.linspace(1, N-1, N-1), entropies)
+plt.show()
