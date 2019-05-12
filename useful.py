@@ -10,8 +10,7 @@ import numpy.linalg as la
 from numpy.random import normal
 
 def mpa(psi):
-    """ Calculates the matrix product ansatz
-    for a spin chain state psi. """
+    """ Calculates the matrix product ansatz for a spin chain state psi. """
 
     DIM = psi.size
     N = DIM.bit_length() - 1
@@ -42,17 +41,65 @@ def mpa(psi):
 
     return matrices, coefficients,
 
-from scipy.sparse import lil_matrix
-from scipy.sparse.linalg import eigsh
+import scipy.sparse as sp
 
-def gstate(N, periodic):
-    """ Creates a spin chain ground state, saves it to a file. """
+def kronH(N, periodic):
+    """ Constructs heisenberg spin chain Hamiltonian using Kronecker products. """
+
+    # Initialize constants
+    DIM = 2**N
+    S2 = sp.csc_matrix([
+        [1,  0,  0, 0],
+        [0, -1,  2, 0],
+        [0,  2, -1, 0],
+        [0,  0,  0, 1]
+        ])
+
+    # Hamiltonian matrix
+    H = sp.csc_matrix((DIM, DIM))
+    for j in range(1, N):
+        H += sp.kron(sp.kron(
+                sp.identity(2**(j-1)),
+                S2),
+                sp.identity(2**(N - j - 1)) )
+
+    if periodic:
+        Sx = sp.csc_matrix([
+            [0, 1],
+            [1, 0]
+            ])
+        H += sp.kron(sp.kron(
+                Sx,
+                sp.identity(2**(N-2))),
+                Sx)
+
+        Sy = sp.csc_matrix([
+            [0, -1j],
+            [1j,  0]
+            ])
+        H += np.real(sp.kron(sp.kron(
+                Sy,
+                sp.identity(2**(N-2))),
+                Sy))
+
+        Sz = sp.csc_matrix([
+            [1,  0],
+            [0, -1]
+            ])
+        H += sp.kron(sp.kron(
+                Sz,
+                sp.identity(2**(N-2))),
+                Sz)
+    return H
+
+def idxH(N, periodic):
+    """ Constructs Hamiltonian matrix row by row. Do not use it - extremely inefficient. """
     
     # Problem size
     DIM = 2**N
     
     # Hamiltonian matrix
-    H = lil_matrix((DIM, DIM))
+    H = sp.csc_matrix((DIM, DIM))
     
     # Hamiltonian construction
     for row in range(DIM):
@@ -77,7 +124,15 @@ def gstate(N, periodic):
                 col = row ^ (1 << (N-2) + 1)
                 H[row, col] += 2
     print()
-    
+ 
+from scipy.sparse.linalg import eigsh
+
+def gstate(N, periodic):
+    """ Creates a spin chain ground state, saves it to a file. """
+
+    # Create Hamiltonian matrix
+    H = kronH(N, periodic)
+   
     # Diagonalize
     print('Diagonalizing...', end=' ', flush=True)
     w, v = eigsh(H, k=1, which='SA')
@@ -89,4 +144,3 @@ def gstate(N, periodic):
     fname += '.npy'
     np.save(fname, v)
     print('Output saved to ' + fname)
-
