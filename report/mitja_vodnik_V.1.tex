@@ -9,6 +9,7 @@
 \usepackage{amssymb}
 \usepackage{subcaption}
 \usepackage{hyperref}
+\usepackage{dirtytalk}
 
 \newcommand{\tht}{\theta}
 \newcommand{\Tht}{\Theta}
@@ -44,6 +45,12 @@
 \newcommand{\expected}[1]{\left\langle #1 \right\rangle}
 \newcommand{\D}{\Delta}
 
+\newcommand{\range}[2]{#1, \ldots, #2}
+\newcommand{\seq}[2]{#1 \ldots #2}
+\newcommand{\psiCoef}[2]{\psi_{\range{#1}{#2}}}
+\newcommand{\psiCoeff}[3]{\psi_{#1, \range{#2}{#3}}}
+\newcommand{\mpa}[2]{#1^{(#2)}_{s_#2}}
+
 \begin{document}
 
     \title{\sc\large Višje računske metode\\
@@ -53,33 +60,142 @@
             \date{\today}
 	\maketitle
 
-    Z metodo Monte-Carlo obravnavamo primer 1D kvantnega oscilatorja v potencialu $V(q) = \half q^2 + \lambda q^4$.
-    Zanimata nas harmonski ($\lambda = 0$) in anharmonski ($\lambda = 1$) primer. \\
+    Bistvo te naloge je, da ustvarimo metodo za generiranje matrično produktnih nastavkov (MPA) za stanja verig spinov $\half$.
+    To pomeni, da hočemo za neko stanje $\ket{\psi}$ verige dolžine $n$ generirati set matrik
+    $\big\{\mpa{A}{j} | s_j \in \{0, 1\}, j = \range{1}{n}\big\}$, da velja:\\
 
     \begin{equation}\label{eq1}
-        P_{q_1, q_2} \propto \exp \left( -\frac{M}{2\beta}(q_2 - q_1)^2 - \frac{\beta}{M}V(q_1) \right)
+        \ket{\psi} = \sum_{\range{s_1}{s_n}} \psiCoef{s_1}{s_n} \ket{\seq{s_1}{s_n}}
     \end{equation}
+
+    \begin{equation}\label{eq2}
+        \psiCoef{s_1}{s_n} = \prod_{j=1}^{n} \mpa{A}{j}
+    \end{equation}
+
+    ($s_j \in \{0, 1\}$ naj predstavlja orientacijo $z$ komponente spina na mestu $j$ - delamo v lastni bazi operatorja $S_z$)
+
+    \section{MPA algoritem} 
+
+    Predstavimo stanje $\ket{\psi}$ kot stolpec:
+
+    \begin{equation}\label{eq3}
+        \Psi^{(1)\prime} = \begin{pmatrix} \psiCoef{0}{0} \\ \vdots \\ \psiCoef{1}{1} \end{pmatrix}, \quad
+            \Psi^{(1)\prime}_{(\seq{s_1}{s_n})} = \psiCoef{s_1}{s_n}
+    \end{equation}
+
+    Indeks elementa v stolpcu smo zapisali binarno, kot ustrezno konfiguracijo verige $(\seq{s_1}{s_n}) = (\seq{s_1}{s_n})_2$, tako da prvi spin
+    predstavlja MSB, zadnji pa LSB zapisa. Stolpec sedaj razdelimo na pol in ustvarimo matriko z dvema vrsticama - iz binarnega zapisa indeksa
+    \say{odščipnemo} MSB:
+
+    \begin{equation}\label{eq4}
+        \Psi^{(1)} = \begin{pmatrix} \seq{\psiCoeff{0}{0}{0}}{\psiCoeff{0}{1}{1}} \\ \seq{\psiCoeff{1}{0}{0}}{\psiCoeff{1}{1}{1}} \end{pmatrix},
+            \quad \Psi^{(1)}_{(s_1)(\seq{s_2}{s_n})} = \psiCoef{s_1}{s_n}
+    \end{equation}
+
+    Na tako ustvarjeni mariki izvedemo SVD razcep:
+
+    \begin{equation}\label{eq5}
+        \Psi^{(1)} = U^{(1)} D^{(1)} V^{(1)\dagger},
+            \quad \Psi^{(1)}_{(s_1)(\seq{s_2}{s_n})} = \sum_{k_1=1}^{M_1} U^{(1)}_{(s_1)k_1} \lambda^{(1)}_{k_1} V^{(1)\dagger}_{k_1(\seq{s_2}{s_n})}
+    \end{equation}
+
+    Prvi dve matriki iskanega seta dobimo kot vrstici matrike $U^{(1)}$:
+
+    \begin{equation}\label{eq6}
+        \begin{split}
+            A^{(1)}_0 &= \left( \seq{U^{(1)}_{0, 1}}{U^{(1)}_{0, M_1}} \right) \\
+            A^{(1)}_1 &= \left( \seq{U^{(1)}_{1, 1}}{U^{(1)}_{1, M_1}} \right)
+        \end{split}
+    \end{equation}
+
+    Nato pripravimo matriko za naslednji korak:
+
+    \begin{equation}\label{eq7}
+        \Psi^{(2)\prime} = D^{(1)} V^{(1)\dagger},
+            \quad \Psi^{(2)\prime}_{k_1(\seq{s_2}{s_n})} = \lambda^{(1)}_{k_1} V^{(1)\dagger}_{k_1(\seq{s_2}{s_n})}
+    \end{equation}
+
+    Opisani postopek sedaj posplošimo za nadaljne korake ($j = \range{2}{n - 1}$):
+
+    \begin{enumerate}
+        \item Začnemo z matriko $\Psi^{(j)\prime}$ dimenzije $M_{j-1} \times 2^{n-j+1}$. Najprej jo preoblikujemo v matriko dimenzije
+            $2M_{j-1} \times 2^{n-j}$, tako da binarnemu zapisu drugega indeksa \say{odščipnemo} MSB:
+
+            \begin{equation}\label{eq8}
+                \Psi^{(j)}_{(k_{j-1}s_j)(\seq{s_{j+1}}{s_n})} = \Psi^{(j)\prime}_{k_{j-1}(\seq{s_{j}}{s_n})}
+            \end{equation}
+
+            (Uvedli smo oznako $(ab)$, ki pomeni, da binarna zapisa števil $a$ in $b$ združimo v eno število.)
+
+        \item Na dobljeni matriki izvedemo SVD razcep:
+
+            \begin{equation}\label{eq9}
+                \begin{split}
+                    \Psi^{(j)} &= U^{(j)} D^{(j)} V^{(1)\dagger}, \\
+                    \quad
+                    \Psi^{(j)}_{(k_{j-1}s_j)(\seq{s_{j+1}}{s_n})}
+                    &= \sum_{k_j=1}^{M_j} U^{(j)}_{(k_{j-1}s_j)k_j} \lambda^{(j)}_{k_j} V^{(j)\dagger}_{k_j(\seq{s_{j+1}}{s_n})}
+                \end{split}
+            \end{equation}
+
+        \item Naslednji matriki produktnega nastavka sestavimo po formuli:
+
+            \begin{equation}\label{eq10}
+                \left( A^{(j)}_{s_j} \right)_{k_{j-1}k_j} = U^{(j)}_{(k_{j-1}s_j)k_j}
+            \end{equation}
+
+            Formula nam pove, da sta matriki sestavljeni iz alternirajočh vrstic matrike $U^{(j)}$:
+
+            \begin{equation}\label{eq11}
+                \begin{split}
+                    A^{(j)}_0 &= \begin{pmatrix}
+                        U^{(j)}_{(10)1}       & \cdots & U^{(j)}_{(10)M_j}     \\
+                        \vdots                &        & \vdots                 \\
+                        U^{(j)}_{(M_{j-1}0)1} & \cdots & U^{(j)}_{(M_{j-1}0)M_j} \\
+                    \end{pmatrix} \\
+                    A^{(j)}_1 &= \begin{pmatrix}
+                        U^{(j)}_{(11)1}       & \cdots & U^{(j)}_{(11)M_j}     \\
+                        \vdots                &        & \vdots                 \\
+                        U^{(j)}_{(M_{j-1}1)1} & \cdots & U^{(j)}_{(M_{j-1}1)M_j} \\
+                    \end{pmatrix}
+                \end{split}
+            \end{equation}
+
+        \item Pripravimo še matriko za naslednji korak:
+
+            \begin{equation}\label{eq12}
+                \Psi^{(j+1)\prime} = D^{(j)}V^{(j)\dagger}
+            \end{equation}
+
+    Zadnji matriki nastavka dobimo kot stolpca matrike dobljene v zadnjem koraku:
+ 
+    \begin{equation}\label{eq13}
+        A^{(n)}_0 = \begin{pmatrix} \Psi^{(n)}_{1(0)} \\ \vdots \\ \Psi^{(n)}_{M_{n-1}(0)} \end{pmatrix}
+        A^{(n)}_1 = \begin{pmatrix} \Psi^{(n)}_{1(1)} \\ \vdots \\ \Psi^{(n)}_{M_{n-1}(1)} \end{pmatrix}
+    \end{equation}
+           
+    \end{enumerate}
 
     \section{Biparticija osnovnega stanja - SVD} 
 
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika1.pdf}
-        \caption{Simetrična biparticija.}
+        \caption{Odvisnost entropije prepletenosti simetrične biparticije osnovnega stanja od dolžine verige.}
         \label{slika1}
     \end{figure}
 
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika2.pdf}
-        \caption{Nekompaktna biparticija s periodo 1.}
+        \caption{Odvisnost entropije prepletenosti alternirajoče biparticije osnovnega stanja s periodo 1 od dolžine verige.}
         \label{slika2}
     \end{figure}
 
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika3.pdf}
-        \caption{Odvisnost od periode biparticije.}
+        \caption{Odvisnost entropije prepletenosti od periode blokov alternirajoče biparticije.}
         \label{slika3}
     \end{figure}
 
@@ -93,7 +209,7 @@
         \begin{subfigure}{\textwidth}
             \includegraphics[width = \textwidth]{slika4b.pdf}
         \end{subfigure}
-        \caption{Odvisnost od velikosti blokov - PRP.}
+        \caption{Odvisnost entropije prepletenosti od velikosti blokov biparticije osnovnega stanja s periodičnimi robnimi pogoji.}
         \label{slika4}
     \end{figure}
 
@@ -105,7 +221,7 @@
         \begin{subfigure}{\textwidth}
             \includegraphics[width = \textwidth]{slika5b.pdf}
         \end{subfigure}
-        \caption{Odvisnost od velikosti blokov - PRP.}
+        \caption{Odvisnost entropije prepletenosti od velikosti blokov biparticije osnovnega stanja z odprtimi robnimi pogoji.}
         \label{slika5}
     \end{figure}
 
@@ -117,7 +233,7 @@
         \begin{subfigure}{\textwidth}
             \includegraphics[width = \textwidth]{slika6b.pdf}
         \end{subfigure}
-        \caption{Odvisnost od velikosti blokov - PRP.}
+        \caption{Odvisnost entropije prepletenosti od velikosti blokov biparticije naključnega stanja.}
         \label{slika6}
     \end{figure}
 
