@@ -8,7 +8,7 @@ from useful import bits, mpaEntropy
 
 ground = False
 periodic = False
-chains = range(2, 19, 2)
+chains = range(3, 21, 2)
 
 entropies = []
 for n in chains:
@@ -22,12 +22,10 @@ ax.grid()
 ax.set_ylabel('$E(| \\psi_0 \\rangle)$')
 ax.set_xlabel('$j/n$')
 
-lines = []
-names = []
 for n, c in enumerate(chains):
-    lines.append(
-            ax.plot(np.linspace(0, 1, len(entropies[n])), entropies[n])[0]
-            )
-    names.append('$n = %d$' % c)
-ax.legend(lines, names)
+    ax.plot(np.linspace(0, 1, len(entropies[n])), entropies[n])
+if min(chains) % 2 == 0:
+    ax.set_title('Sodi $n$ od $%d$ do $%d$' % (min(chains), max(chains)))
+else:
+    ax.set_title('Lihi $n$ od $%d$ do $%d$' % (min(chains), max(chains)))
 plt.show()

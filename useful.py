@@ -223,7 +223,7 @@ def svdEntropy(N, frag, periodic):
     print()
     
     # Make SVD
-    print('Creating SVD...', end=' ')
+    print('Creating SVD...', end=' ', flush=True)
     u, d, v = la.svd(wmatrix, False)
     print('Done')
     
