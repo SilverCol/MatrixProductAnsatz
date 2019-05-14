@@ -220,36 +220,53 @@
 
     \subsection{Račun s SVD razcepom} 
 
-    Lotimo se računanja entropije prepletenosti za osnovno stanje Heisenbergove spinske verige:
+    Lotimo se računanja entropije prepletenosti za osnovno stanje $\ket{\psi_0}$ Heisenbergove spinske verige:
  
     \begin{equation}\label{eq19}
         H = \sum_{j=1}^{n} \vs_j \cdot \vs_{j+1}, \quad \vs_{n+1} = \vs_1
     \end{equation}
 
-    Zgoraj opisana veriga ima periodične robne pogoje, obravnavali pa jo bomo tudi z odprtimi. V takem primeru zgornja vsota teče le do $n - 1$.
+    Zgoraj opisana veriga ima periodične robne pogoje (PRP), obravnavali pa jo bomo tudi z odprtimi (ORP).
+    V takem primeru zgornja vsota teče le do $n - 1$.
+    Koeficiente stanja $\ket{\psi_0}$ poiščemo kar z direktno diagonalizacijo Hamiltonske matrike. \\
+
+    Najprej si poglejmo simetrične biparticije verig - računali bomo za nekaj različnih sodih dolžin verig, ki jih razdelimo pol: prva polovica
+    spinov naj pripada particiji $A$, druga pa particiji $B$. Odvisnost entropije prepletenosti za tovrstne biparticije od dolžine verige
+    prikazuje slika~\ref{slika1}. Prikazana sta rezultata za PRP in ORP, ki se med seboj precej razlikujeta - pri PRP entropija z dolžino
+    verige monotono narašča, pri ORP pa sicer v povprečju tudi narašča vendar precej niha.
 
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika1.pdf}
-        \caption{Odvisnost entropije prepletenosti simetrične biparticije osnovnega stanja od dolžine verige.}
+        \caption{Odvisnost entropije prepletenosti simetrične biparticije osnovnega stanja od dolžine verige. Dolžine verig na tem grafu so le sode.}
         \label{slika1}
     \end{figure}
+
+    Razdelimo sedaj verigo še drugače: particiji naj vsebujeta alternirajoče spine (vsakega drugega) - recimo temu, da ima bipraticija periodo 1.
+    Graf~\ref{slika2} prikazuje odvisnost entropije od dolžine verige še za ta primer. Dolžine so tu tudi lihe. V tem primeru opazimo linearno
+    naraščanje tako za PRP, kot tudi za ORP. Vredno je omeniti tudi, da so entropije v tem primeru nekajkrat večje kot v prejšnjem.
 
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika2.pdf}
-        \caption{Odvisnost entropije prepletenosti alternirajoče biparticije osnovnega stanja s periodo 1 od dolžine verige.}
+        \caption{Odvisnost entropije prepletenosti alternirajoče biparticije osnovnega stanja s periodo 1 od dolžine verige. Na grafu so tako
+        verige sode kot lihe dolžine.}
         \label{slika2}
     \end{figure}
+
+    Omejimo se sedaj na verigo dolžine $n = 20$, in preizkusimo še odvisnost entropije od periode biparticije - manjša perioda pomeni bolj
+    razdrobljeno biparticijo. To odvisnost prikazuje graf~\ref{slika3} - vidimo da je entropija večja za bolj razdrobljene biparticije.
 
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika3.pdf}
-        \caption{Odvisnost entropije prepletenosti od periode blokov alternirajoče biparticije.}
+        \caption{Odvisnost entropije prepletenosti od periode blokov alternirajoče biparticije. Periode so: $1$, $2$, $5$ in $10$}
         \label{slika3}
     \end{figure}
 
     \section{Račun z MPA algoritmom}
+
+    \ldots
 
     \begin{figure}
         \centering
