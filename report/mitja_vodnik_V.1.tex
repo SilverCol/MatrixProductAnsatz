@@ -266,7 +266,23 @@
 
     \section{Račun z MPA algoritmom}
 
-    \ldots
+    Ko izvajamo zgoraj opisani algotitem za MPA, na vsakem koraku izvedemo en SVD razcep. Schmidtovi koeficienti, ki jih  dobimo na $j$-tem koraku
+    ravno ustrezajo biparticiji:
+ 
+    \begin{equation}\label{eq20}
+        \Lambda = [1, j] \cup [j+1, n],
+    \end{equation}
+
+    kjer z $[a, b]$ pišemo intervale po celih številih. Ko izvedemo cel algoritem torej dobimo koeficiente za vse kompaktne biparticije verige. \\
+
+    Na nadaljnjih slikah so prikazane na ta način računane entropije. Vsaka slika vsebuje grafe pridobljene pri nekaj različnih dolžinah verig.
+    Os $x$ je normirana, da imajo vsi grafi enako definicijsko območje. Vrednost na $x$ osi predstavja mejo med blokoma biparticije, z ustrezno 
+    vrednostjo entropije na $y$ osi. Take slike so narejene posebej za sode in lihe dolžine verig ter še posebej za tri vrste kvantnih stanj:
+    osnovno stanje s PRP (slika~\ref{slika4}) in ORP (slika~\ref{slika5}) ter za naključno stanje z normalno porazdeljenimi koeficienti
+    (slika~\ref{slika6}). \\
+
+    Precej nepričakovana je slika s PRP in lihimi verigami (druga na~\ref{slika4}), nima namreč simetrije kakršno imajo ostale slike. Tega si ne 
+    znam razložiti.
 
     \begin{figure}
         \centering
