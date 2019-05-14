@@ -8,7 +8,7 @@ from useful import bits, mpaEntropy
 
 ground = False
 periodic = False
-chains = range(3, 21, 2)
+chains = range(5, 22, 2)
 
 entropies = []
 for n in chains:
@@ -23,7 +23,7 @@ ax.set_ylabel('$E(| \\psi_0 \\rangle)$')
 ax.set_xlabel('$j/n$')
 
 for n, c in enumerate(chains):
-    ax.plot(np.linspace(0, 1, len(entropies[n])), entropies[n])
+    ax.plot(np.linspace(0, 1, len(entropies[n]) + 2), [0] + entropies[n] + [0])
 if min(chains) % 2 == 0:
     ax.set_title('Sodi $n$ od $%d$ do $%d$' % (min(chains), max(chains)))
 else:
