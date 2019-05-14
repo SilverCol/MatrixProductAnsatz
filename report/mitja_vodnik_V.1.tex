@@ -35,7 +35,6 @@
 \newcommand{\id}[1]{\mathbf{1}_{2^{#1}}}
 \newcommand{\tinv}{\frac{1}{\tau}}
 \newcommand{\s}{\sigma}
-\newcommand{\us}{\underline{\s}}
 \newcommand{\vs}{\vec{\s}}
 \newcommand{\vr}{\vec{r}}
 \newcommand{\vq}{\vec{q}}
@@ -50,6 +49,7 @@
 \newcommand{\psiCoef}[2]{\psi_{\range{#1}{#2}}}
 \newcommand{\psiCoeff}[3]{\psi_{#1, \range{#2}{#3}}}
 \newcommand{\mpa}[2]{#1^{(#2)}_{s_#2}}
+\newcommand{\us}{\underline{s}}
 
 \begin{document}
 
@@ -166,6 +166,8 @@
             \begin{equation}\label{eq12}
                 \Psi^{(j+1)\prime} = D^{(j)}V^{(j)\dagger}
             \end{equation}
+           
+    \end{enumerate}
 
     Zadnji matriki nastavka dobimo kot stolpca matrike dobljene v zadnjem koraku:
  
@@ -173,10 +175,58 @@
         A^{(n)}_0 = \begin{pmatrix} \Psi^{(n)}_{1(0)} \\ \vdots \\ \Psi^{(n)}_{M_{n-1}(0)} \end{pmatrix}
         A^{(n)}_1 = \begin{pmatrix} \Psi^{(n)}_{1(1)} \\ \vdots \\ \Psi^{(n)}_{M_{n-1}(1)} \end{pmatrix}
     \end{equation}
-           
-    \end{enumerate}
 
-    \section{Biparticija osnovnega stanja - SVD} 
+    O pravilnosti implementacije algoritma  se lahko prepričamo, če s pomočjo dobljenega seta matrik stanje $\ket{\psi}$ rekonstruiramo po
+    formuli~\ref{eq2}.
+    Za preprost prikaz uporabnosti MPA se bomo sedaj lotili problema entropije prepletenosti biparticije spinske verige.
+
+    \section{Entropija prepletenosti}
+    
+    Na spinski verigi $\Lambda$ najprej definirajmo biparticijo - razdelimo jo na dve disjunktni množici mest $A$ in $B$:
+ 
+    \begin{equation}\label{eq14}
+        \Lambda = A \cup B, \quad A \cap B = \emptyset
+    \end{equation}
+
+    Spinska števila, ki pripadajo particiji $A$ označimo s $\us_A = \{\range{s_1}{s_{|A|}}\}$, tista, ki pripadajo particiji $B$ pa s
+    $\us_B = \{\range{s_1}{s_{|B|}}\}$.
+    Entropijo prepletenosti definiramo s pomočjo reduciranih gostotnih operatorjev (RGO) particij:
+ 
+    \begin{equation}\label{eq15}
+        \begin{split}
+            E(\ket{\psi}) &= S(\rho_A) = S(\rho_B) \\
+            S(\rho) &= -tr\rho\log\rho
+        \end{split}
+    \end{equation}
+
+    Zgornji izraz nam pomaga računati Lieb-Arakijev izrek. Ta pravi, da sta neničelna dela spektrov obeh RGO enaka. Če neničelni
+    del spektrov zapišemo kot:
+ 
+    \begin{equation}\label{eq16}
+        spec(\rho_A)\backslash\{0\} = spec(\rho_B)\backslash\{0\} = \big\{ \lambda_j^2 | j = \range{1}{M} \big\},
+    \end{equation}
+
+    izračunamo entropijo prepletenosti kot:
+ 
+    \begin{equation}\label{eq17}
+        E(\ket{\psi}) = -2\sum_{j=1}^M \lambda_j^2 \log{\lambda_j}
+    \end{equation}
+
+    Pri tem so $\lambda_j$ Schmidtovi koeficienti SVD razcepa $2^{|A|} \times 2^{|B|}$ matrike $\Psi$ z elementi:
+ 
+    \begin{equation}\label{eq18}
+        \Psi_{\us_A, \us_B} = \langle \us_A, \us_B \ket{\psi}
+    \end{equation}
+
+    \subsection{Račun s SVD razcepom} 
+
+    Lotimo se računanja entropije prepletenosti za osnovno stanje Heisenbergove spinske verige:
+ 
+    \begin{equation}\label{eq19}
+        H = \sum_{j=1}^{n} \vs_j \cdot \vs_{j+1}, \quad \vs_{n+1} = \vs_1
+    \end{equation}
+
+    Zgoraj opisana veriga ima periodične robne pogoje, obravnavali pa jo bomo tudi z odprtimi. V takem primeru zgornja vsota teče le do $n - 1$.
 
     \begin{figure}
         \centering
@@ -199,7 +249,7 @@
         \label{slika3}
     \end{figure}
 
-    \section{Biparticija stanja - MPA}
+    \section{Račun z MPA algoritmom}
 
     \begin{figure}
         \centering
